@@ -7,12 +7,6 @@ class Neuron {
         this.id = null;
         this.x;
         this.y;
-
-        // Initialize weights (random)
-/*         for (var i = 0; i < this.inputs.length; i++) {
-            this.weights.push(random(-1,1));
-            console.log(this.weights[i]);
-        } */
     }
 
     weightedSum() {
@@ -21,19 +15,29 @@ class Neuron {
             sum += this.inputs[i] * this.weights[i];
         }
         // Normalize
-        this.output = sum / this.inputs.length;
-        return this.output;
+        return sum / this.inputs.length;
     }
 
-    sigmoidActivationFunc(input) {
-        return (1 / (1 + exp(-input)));
+    activationFunc(input, sel) {
+        switch (sel) {
+            case 0:
+                // Sigmoid
+                return (1 / (1 + exp(-input)));
+            case 1:
+                // f(x) = x
+                return input;
+            case 2:
+                // f(x) = tan(x) - BEWARE THAT THE IMAGE OF TAN(X) IS [-PI/2, PI/2]
+                return Math.tan(input);
+            case 3:
+                // f(x) = tanh(x)
+                return Math.tanh(input);
+            case 3:
+                // f(x) = smooth sign(x)
+                return input / (1 + Math.abs(input));
+            default:
+                // Sigmoid
+                return (1 / (1 + exp(-input)));
+        }
     }
-
-/*     show() {
-        push();
-        fill(255);
-        stroke(0);
-        circle(50, 50, CANVAS_HEIGHT / 20);
-        pop();
-    } */
 }

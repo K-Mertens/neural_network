@@ -9,7 +9,7 @@ const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const FRAME_RATE = 10;
 let neurons = [];
-let nnInputs = [2, 2, 1];
+let nnInputs = [3, 3, 2, 2, 1];
 let nn;
 let isNeuRequested = false;
 let isConRequested = false;
@@ -25,7 +25,6 @@ function preload() {
 function setup() {
   // Canvas creation
   canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-  //canvas.parent('sketch-holder');
   background(60);
   frameRate(FRAME_RATE);
 
@@ -41,16 +40,15 @@ function setup() {
 
   nn = new NeuralNetwork(nnInputs);
   nn.initNetwork();
-  //saveJSON(nn.network, 'nn_init.json');
   nn.feedInputs(null);
   nn.calculateOutputs();
- //saveJSON(nn.network, 'nn_1st_step.json');
-  nn.inOutMap();
-  nn.calculateOutputs();
-  //saveJSON(nn.network, 'nn_2nd_step.json');
-  nn.inOutMap();
-  nn.calculateOutputs();
-  //saveJSON(nn.network, 'nn_3rd_step.json');
+
+ // Depth of NN minus one because first step (feeding inputs and the first feedforwardstep) is kept out of this
+  for (var i = 0; i < nn.network.length - 1; i++) {
+    nn.inOutMap();
+    nn.calculateOutputs();
+  }
+  //saveJSON(nn.network, 'final_step.json');
 
   // Method to access all neurons - works
 /*   nn.network.forEach(layer => {
@@ -65,17 +63,20 @@ function draw() {
   background(60);
   nn.showNeurons(isNeuRequested);
   nn.showConnections(isConRequested);
+
   push();
-  
   translate(CANVAS_WIDTH - 80, 50);
   textAlign(CENTER, CENTER);
+  fill(255);
   text('Framerate : ' + FRAME_RATE + 'fps', 0, -30);
   rotate(testAngle);
-  
-  text.position
-  line(0,0,15,15);
+  stroke(255);
+  line(0,0,15,0);
+  noFill();
+  circle(0,0,30);
   pop();
-  testAngle++;
+
+  testAngle += 0.2;
 }
 
 function toggleConnections() {

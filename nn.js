@@ -60,7 +60,7 @@ class NeuralNetwork {
     calculateOutputs() {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
-                this.network[i][j].sigmoidActivationFunc(this.network[i][j].weightedSum());
+                this.network[i][j].output = this.network[i][j].activationFunc(this.network[i][j].weightedSum());
             } 
         }
     }

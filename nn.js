@@ -96,6 +96,22 @@ class NeuralNetwork {
         }  
     }
 
+    showOutputs(isRequested) {
+        if (isRequested) {
+            for (var i = 0; i < this.network.length; i++) {
+                for (var j = 0; j < this.network[i].length; j++) {
+                    push();
+                    textSize(10);
+                    fill(100, 255, 100);
+                    //console.log(this.network[i][j].output.x);
+                    translate(this.network[i][j].x, this.network[i][j].y);
+                    text((Math.round(this.network[i][j].output * 1000)) / 1000, 15, -10);
+                    pop();
+                } 
+            }
+        }  
+    }
+
     saveToJSON() {
         saveJSON(this.network, 'nn.json');
     }

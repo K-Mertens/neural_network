@@ -7,15 +7,15 @@
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
-const FRAME_RATE = 10;
 let neurons = [];
-let nnInputs = [3, 3, 2, 2, 1];
+let nnInputs = [12, 8, 8, 2];
 let nn;
 let isNeuRequested = false;
 let isConRequested = false;
 let cbToggleConnections;
 let buttonSaveNeuralNetworkJSON;
 let cbToggleNeurons;
+let slFrameRate;
 var testAngle = 0;
 
 function preload() {
@@ -26,7 +26,6 @@ function setup() {
   // Canvas creation
   canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   background(60);
-  frameRate(FRAME_RATE);
 
   cbToggleConnections = createCheckbox('Toggle connections');
   cbToggleConnections.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 50);
@@ -37,6 +36,7 @@ function setup() {
   cbToggleNeurons = createCheckbox('Toggle neurons');
   cbToggleNeurons.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 100);
   cbToggleNeurons.mousePressed(toggleNeurons);
+  slFrameRate = createSlider(1,60,10,1);
 
   nn = new NeuralNetwork(nnInputs);
   nn.initNetwork();
@@ -59,16 +59,18 @@ function setup() {
 }
 
 function draw() {
+  frameRate(slFrameRate.value());
   
   background(60);
   nn.showNeurons(isNeuRequested);
   nn.showConnections(isConRequested);
+  nn.showOutputs(true);
 
   push();
   translate(CANVAS_WIDTH - 80, 50);
   textAlign(CENTER, CENTER);
   fill(255);
-  text('Framerate : ' + FRAME_RATE + 'fps', 0, -30);
+  text('Framerate : ' + slFrameRate.value() + 'fps', 0, -30);
   rotate(testAngle);
   stroke(255);
   line(0,0,15,0);

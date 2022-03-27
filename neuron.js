@@ -26,8 +26,7 @@ class Neuron {
     }
 
     sigmoidActivationFunc(input) {
-        console.log("Activation value : " + 1 / (1 + exp(-input)))
-        return 1 / (1 + exp(-input));
+        return (1 / (1 + exp(-input)));
     }
 
 /*     show() {

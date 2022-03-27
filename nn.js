@@ -18,44 +18,31 @@ class NeuralNetwork {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
                 if (i == 0) {
-                    //this.network[i][j].inputs = [random(-1,1)];
                     this.network[i][j].layer = 1;
                     this.network[i][j].id = j;
                     this.network[i][j].inputs = [0];
                     this.network[i][j].weights = [random(-1,1)];
+                    this.network[i][j].x = (CANVAS_WIDTH / (this.inputs.length + 2)) * 1.5;
+                    this.network[i][j].y = (CANVAS_HEIGHT / (this.inputs[0] + 2)) * (j + 1.5);
                 } else {
                     for (var k = 0; k < this.network[i - 1].length; k++) {
-                        //this.network[i][j].inputs.push(random(-1,1));
                         this.network[i][j].layer = i + 1;
                         this.network[i][j].id = j;
                         this.network[i][j].inputs.push(0);
                         this.network[i][j].weights.push(random(-1,1));
+                        this.network[i][j].x = (CANVAS_WIDTH / (this.inputs.length + 2)) * (i + 1.5);
+                        this.network[i][j].y = (CANVAS_HEIGHT / (this.inputs[i] + 2)) * (j + 1.5);
                     }
                 }              
             }
         }
     }
 
-/*     showNeuron() {
-        for (var i = 0; i < this.inputs.length; i++) {
-            for (var j = 0; j < this.inputs[i]; j++) {
-                push();
-                fill(255);
-                stroke(0);
-                //circle((CANVAS_WIDTH / this.inputs.length), (CANVAS_HEIGHT / this.inputs[i]), 10);
-                circle((CANVAS_WIDTH / (this.inputs.length + 2)) * (i + 1.5), (CANVAS_HEIGHT / (this.inputs[i] + 2)) * (j + 1.5), 20);
-                pop();
-                //console.log(this.inputs);
-            }
-        }
-    } */
-
-    calculateOutputs() {
-        for (var i = 0; i < this.network.length; i++) {
-            for (var j = 0; j < this.network[i].length; j++) {
-                this.network[i][j].weightedSum();
-            } 
-        }
+    // Test of feeding input layer
+    feedInputs(data) {
+        for (var i = 0; i < this.network[0].length; i++) {
+        this.network[0][i].inputs = [random(-1, 1)];
+  }
     }
 
     inOutMap() {
@@ -63,10 +50,17 @@ class NeuralNetwork {
             for (var j = 0; j < this.network[i].length; j++) {
                 if (i != this.network.length - 1) {
                     for (var k = 0; k < this.network[i+1].length; k++) {
-                        //this.network[i+1][k].inputs.push(this.network[i][j].output);
                         this.network[i+1][k].inputs[j] = this.network[i][j].output;
                     }
                 }
+            } 
+        }
+    }
+
+    calculateOutputs() {
+        for (var i = 0; i < this.network.length; i++) {
+            for (var j = 0; j < this.network[i].length; j++) {
+                this.network[i][j].sigmoidActivationFunc(this.network[i][j].weightedSum());
             } 
         }
     }
@@ -75,15 +69,11 @@ class NeuralNetwork {
         if (isRequested) {
             for (var i = 0; i < this.network.length; i++) {
                 for (var j = 0; j < this.network[i].length; j++) {
-                    this.network[i][j].x = (CANVAS_WIDTH / (this.inputs.length + 2)) * (i + 1.5);
-                    this.network[i][j].y = (CANVAS_HEIGHT / (this.inputs[i] + 2)) * (j + 1.5);
                     push();
                     fill(255);
                     stroke(0);
-                    //circle((CANVAS_WIDTH / this.inputs.length), (CANVAS_HEIGHT / this.inputs[i]), 10);
                     circle(this.network[i][j].x, this.network[i][j].y, 20);
                     pop();
-                    //console.log(this.inputs);
                 }
             }
         }
@@ -93,7 +83,6 @@ class NeuralNetwork {
         if (isRequested) {
             for (var i = 0; i < this.network.length; i++) {
                 for (var j = 0; j < this.network[i].length; j++) {
-                    //this.network[i+1][j].inputs.push(this.network[i][j].output);
                     if (i != this.network.length - 1) {
                         for (var k = 0; k < this.network[i+1].length; k++) {
                             push();

@@ -9,9 +9,14 @@ const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const FRAME_RATE = 10;
 let neurons = [];
-let nnInputs = [4, 3, 2, 1];
+let nnInputs = [2, 2, 1];
+let nn;
 let isNeuRequested = false;
 let isConRequested = false;
+let cbToggleConnections;
+let buttonSaveNeuralNetworkJSON;
+let cbToggleNeurons;
+var testAngle = 0;
 
 function preload() {
 
@@ -23,16 +28,6 @@ function setup() {
   //canvas.parent('sketch-holder');
   background(60);
   frameRate(FRAME_RATE);
-
-/*   neuron = new Neuron([0.5, 0.62, -0.87, 0.4]);
-  
-  neuron.sigmoidActivationFunc(neuron.weightedSum());
-
-  for(var i = 0; i < 10; i++) {
-    neu = new Neuron([random(-1, 1), random(-1, 1), random(-1, 1), random(-1, 1)]);
-    neurons.push(neu);
-  } */
-
 
   cbToggleConnections = createCheckbox('Toggle connections');
   cbToggleConnections.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 50);
@@ -47,13 +42,15 @@ function setup() {
   nn = new NeuralNetwork(nnInputs);
   nn.initNetwork();
   //saveJSON(nn.network, 'nn_init.json');
-  // Test of initializing input layer
-  for (var i = 0; i < nn.network[0].length; i++) {
-    nn.network[0][i].inputs = [(random(-1, 1))];
-  }
+  nn.feedInputs(null);
   nn.calculateOutputs();
+ //saveJSON(nn.network, 'nn_1st_step.json');
   nn.inOutMap();
-  //saveJSON(nn.network, 'nn_modified.json');
+  nn.calculateOutputs();
+  //saveJSON(nn.network, 'nn_2nd_step.json');
+  nn.inOutMap();
+  nn.calculateOutputs();
+  //saveJSON(nn.network, 'nn_3rd_step.json');
 
   // Method to access all neurons - works
 /*   nn.network.forEach(layer => {
@@ -64,9 +61,21 @@ function setup() {
 }
 
 function draw() {
+  
   background(60);
   nn.showNeurons(isNeuRequested);
   nn.showConnections(isConRequested);
+  push();
+  
+  translate(CANVAS_WIDTH - 80, 50);
+  textAlign(CENTER, CENTER);
+  text('Framerate : ' + FRAME_RATE + 'fps', 0, -30);
+  rotate(testAngle);
+  
+  text.position
+  line(0,0,15,15);
+  pop();
+  testAngle++;
 }
 
 function toggleConnections() {

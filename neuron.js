@@ -3,6 +3,8 @@ class Neuron {
         this.inputs = [];
         this.weights = [];
         this.output = null;
+        this.layer = null;
+        this.id = null;
         this.x;
         this.y;
 
@@ -18,10 +20,8 @@ class Neuron {
         for (var i = 0; i < this.weights.length; i++) {
             sum += this.inputs[i] * this.weights[i];
         }
-        console.log("Sum : " + sum);
         // Normalize
         this.output = sum / this.inputs.length;
-        console.log("Output : " + this.output);
         return this.output;
     }
 

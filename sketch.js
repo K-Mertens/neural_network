@@ -7,8 +7,11 @@
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
+const FRAME_RATE = 10;
 let neurons = [];
-let nnInputs = [10, 5, 3, 2];
+let nnInputs = [4, 3, 2, 1];
+let isNeuRequested = false;
+let isConRequested = false;
 
 function preload() {
 
@@ -19,6 +22,7 @@ function setup() {
   canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   //canvas.parent('sketch-holder');
   background(60);
+  frameRate(FRAME_RATE);
 
 /*   neuron = new Neuron([0.5, 0.62, -0.87, 0.4]);
   
@@ -29,11 +33,27 @@ function setup() {
     neurons.push(neu);
   } */
 
+
+  cbToggleConnections = createCheckbox('Toggle connections');
+  cbToggleConnections.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 50);
+  cbToggleConnections.mousePressed(toggleConnections);
+  buttonSaveNeuralNetworkJSON = createButton('Save JSON');
+  buttonSaveNeuralNetworkJSON.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT);
+  buttonSaveNeuralNetworkJSON.mousePressed(saveNeuralNetworkJSON);
+  cbToggleNeurons = createCheckbox('Toggle neurons');
+  cbToggleNeurons.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 100);
+  cbToggleNeurons.mousePressed(toggleNeurons);
+
   nn = new NeuralNetwork(nnInputs);
   nn.initNetwork();
-  buttonToggleConnections = createButton('Toggle connections');
-  buttonToggleConnections.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT);
-  buttonToggleConnections.mousePressed(toggleConnections);
+  //saveJSON(nn.network, 'nn_init.json');
+  // Test of initializing input layer
+  for (var i = 0; i < nn.network[0].length; i++) {
+    nn.network[0][i].inputs = [(random(-1, 1))];
+  }
+  nn.calculateOutputs();
+  nn.inOutMap();
+  //saveJSON(nn.network, 'nn_modified.json');
 
   // Method to access all neurons - works
 /*   nn.network.forEach(layer => {
@@ -44,11 +64,31 @@ function setup() {
 }
 
 function draw() {
-  //background(60);
-  nn.showNeuron();
-  //nn.showConnections();
+  background(60);
+  nn.showNeurons(isNeuRequested);
+  nn.showConnections(isConRequested);
 }
 
 function toggleConnections() {
-  nn.showConnections();
+  if (cbToggleConnections.checked()) {
+    isConRequested = false;
+  } else {
+    isConRequested = true;
+    clear();
+    background(60);
+  }
+}
+
+function saveNeuralNetworkJSON() {
+  nn.saveToJSON();
+}
+
+function toggleNeurons() {
+  if (cbToggleNeurons.checked()) {
+    isNeuRequested = false;
+  } else {
+    isNeuRequested = true;
+    clear();
+    background(60);
+  }
 }

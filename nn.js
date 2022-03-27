@@ -19,31 +19,19 @@ class NeuralNetwork {
             for (var j = 0; j < this.network[i].length; j++) {
                 if (i == 0) {
                     //this.network[i][j].inputs = [random(-1,1)];
+                    this.network[i][j].layer = 1;
+                    this.network[i][j].id = j;
                     this.network[i][j].inputs = [0];
                     this.network[i][j].weights = [random(-1,1)];
                 } else {
                     for (var k = 0; k < this.network[i - 1].length; k++) {
                         //this.network[i][j].inputs.push(random(-1,1));
+                        this.network[i][j].layer = i + 1;
+                        this.network[i][j].id = j;
                         this.network[i][j].inputs.push(0);
                         this.network[i][j].weights.push(random(-1,1));
                     }
                 }              
-            }
-        }
-    }
-
-    showNeuron() {
-        for (var i = 0; i < this.network.length; i++) {
-            for (var j = 0; j < this.network[i].length; j++) {
-                this.network[i][j].x = (CANVAS_WIDTH / (this.inputs.length + 2)) * (i + 1.5);
-                this.network[i][j].y = (CANVAS_HEIGHT / (this.inputs[i] + 2)) * (j + 1.5);
-                push();
-                fill(255);
-                stroke(0);
-                //circle((CANVAS_WIDTH / this.inputs.length), (CANVAS_HEIGHT / this.inputs[i]), 10);
-                circle(this.network[i][j].x, this.network[i][j].y, 20);
-                pop();
-                //console.log(this.inputs);
             }
         }
     }
@@ -61,19 +49,65 @@ class NeuralNetwork {
             }
         }
     } */
-    showConnections() {
+
+    calculateOutputs() {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
-                //this.network[i+1][j].inputs.push(this.network[i][j].output);
+                this.network[i][j].weightedSum();
+            } 
+        }
+    }
+
+    inOutMap() {
+        for (var i = 0; i < this.network.length; i++) {
+            for (var j = 0; j < this.network[i].length; j++) {
                 if (i != this.network.length - 1) {
                     for (var k = 0; k < this.network[i+1].length; k++) {
-                        push();
-                        stroke(255);
-                        line(this.network[i][j].x, this.network[i][j].y, this.network[i+1][k].x, this.network[i+1][k].y);
-                        pop();
+                        //this.network[i+1][k].inputs.push(this.network[i][j].output);
+                        this.network[i+1][k].inputs[j] = this.network[i][j].output;
                     }
                 }
             } 
         }
+    }
+
+    showNeurons(isRequested) {
+        if (isRequested) {
+            for (var i = 0; i < this.network.length; i++) {
+                for (var j = 0; j < this.network[i].length; j++) {
+                    this.network[i][j].x = (CANVAS_WIDTH / (this.inputs.length + 2)) * (i + 1.5);
+                    this.network[i][j].y = (CANVAS_HEIGHT / (this.inputs[i] + 2)) * (j + 1.5);
+                    push();
+                    fill(255);
+                    stroke(0);
+                    //circle((CANVAS_WIDTH / this.inputs.length), (CANVAS_HEIGHT / this.inputs[i]), 10);
+                    circle(this.network[i][j].x, this.network[i][j].y, 20);
+                    pop();
+                    //console.log(this.inputs);
+                }
+            }
+        }
+    }
+
+    showConnections(isRequested) {
+        if (isRequested) {
+            for (var i = 0; i < this.network.length; i++) {
+                for (var j = 0; j < this.network[i].length; j++) {
+                    //this.network[i+1][j].inputs.push(this.network[i][j].output);
+                    if (i != this.network.length - 1) {
+                        for (var k = 0; k < this.network[i+1].length; k++) {
+                            push();
+                            stroke(255);
+                            line(this.network[i][j].x, this.network[i][j].y, this.network[i+1][k].x, this.network[i+1][k].y);
+                            pop();
+                        }
+                    }
+                } 
+            }
+        }  
+    }
+
+    saveToJSON() {
+        saveJSON(this.network, 'nn.json');
     }
 }

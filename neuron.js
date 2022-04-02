@@ -7,6 +7,7 @@ class Neuron {
         this.id = null;
         this.x;
         this.y;
+        this.d;
     }
 
     weightedSum() {

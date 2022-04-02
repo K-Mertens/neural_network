@@ -1,0 +1,5 @@
+class TrainingData {
+    constructor(inputs) {
+        
+    }
+}

@@ -14,6 +14,7 @@ class NeuralNetwork {
         }
     }
 
+    // To be refactored
     initNetwork() {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
@@ -24,6 +25,8 @@ class NeuralNetwork {
                     this.network[i][j].weights = [random(-1,1)];
                     this.network[i][j].x = (CANVAS_WIDTH / (this.inputs.length + 2)) * 1.5;
                     this.network[i][j].y = (CANVAS_HEIGHT / (this.inputs[0] + 2)) * (j + 1.5);
+                    // Diameter hardcoded
+                    this.network[i][j].d = 10;
                 } else {
                     for (var k = 0; k < this.network[i - 1].length; k++) {
                         this.network[i][j].layer = i + 1;
@@ -32,19 +35,22 @@ class NeuralNetwork {
                         this.network[i][j].weights.push(random(-1,1));
                         this.network[i][j].x = (CANVAS_WIDTH / (this.inputs.length + 2)) * (i + 1.5);
                         this.network[i][j].y = (CANVAS_HEIGHT / (this.inputs[i] + 2)) * (j + 1.5);
+                        // Diameter hardcoded
+                        this.network[i][j].d = 10;
                     }
                 }              
             }
         }
     }
 
-    // Test of feeding input layer
+    // Test of feeding input layer - looks like it is working
     feedInputs(data) {
         for (var i = 0; i < this.network[0].length; i++) {
-        this.network[0][i].inputs = [random(-1, 1)];
-  }
+            this.network[0][i].inputs[0] = data[i];
+        }
     }
 
+    // Maps the outputs of the ith layer with the inputs of the (i+1)th layer
     inOutMap() {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
@@ -57,6 +63,7 @@ class NeuralNetwork {
         }
     }
 
+    // Forward propagation
     calculateOutputs() {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
@@ -72,7 +79,7 @@ class NeuralNetwork {
                     push();
                     fill(255);
                     stroke(0);
-                    circle(this.network[i][j].x, this.network[i][j].y, 20);
+                    circle(this.network[i][j].x, this.network[i][j].y, this.network[i][j].d);
                     pop();
                 }
             }
@@ -96,6 +103,19 @@ class NeuralNetwork {
         }  
     }
 
+    showInputs(isRequested) {
+        if (isRequested) {
+            for (var i = 0; i < this.network[0].length; i++) {
+                push();
+                textSize(10);
+                fill(255, 150, 100);
+                translate(this.network[0][i].x, this.network[0][i].y);
+                text((Math.round(this.network[0][i].inputs * 1000)) / 1000, -40, 4);
+                pop();
+            }
+        }  
+    }
+
     showOutputs(isRequested) {
         if (isRequested) {
             for (var i = 0; i < this.network.length; i++) {
@@ -105,7 +125,7 @@ class NeuralNetwork {
                     fill(100, 255, 100);
                     //console.log(this.network[i][j].output.x);
                     translate(this.network[i][j].x, this.network[i][j].y);
-                    text((Math.round(this.network[i][j].output * 1000)) / 1000, 15, -10);
+                    text((Math.round(this.network[i][j].output * 1000)) / 1000, 15, -5);
                     pop();
                 } 
             }

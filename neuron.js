@@ -40,4 +40,27 @@ class Neuron {
                 return (1 / (1 + exp(-input)));
         }
     }
+
+    activationFuncDerivative(input, sel) {
+        switch (sel) {
+            case 0:
+                // Derivative of sigmoid
+                return (1 / (1 + exp(-input))) * (1 - (1 / (1 + exp(-input))));
+            case 1:
+                // Derivative of x
+                return 1;
+            case 2:
+                // Derivative of tan(x)
+                return  1 / ((input**2) + 1);
+            case 3:
+                // Derivative of tanh(x)
+                return 1 - (Math.tanh(input))**2;
+            case 3:
+                // Derivative of smooth sign(x)
+                return 1 / (1 + (Math.abs(input)**2));
+            default:
+                // Derivative of sigmoid
+                return (1 / (1 + exp(-input))) * (1 - (1 / (1 + exp(-input))));
+        }
+    }
 }

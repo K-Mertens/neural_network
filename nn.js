@@ -51,25 +51,23 @@ class NeuralNetwork {
     }
 
     // Maps the outputs of the ith layer with the inputs of the (i+1)th layer
-    inOutMap() {
-        for (var i = 0; i < this.network.length; i++) {
-            for (var j = 0; j < this.network[i].length; j++) {
-                if (i != this.network.length - 1) {
-                    for (var k = 0; k < this.network[i+1].length; k++) {
-                        this.network[i+1][k].inputs[j] = this.network[i][j].output;
-                    }
-                }
-            } 
+    inOutMap(layerNum) {
+        for (var i = 0; i < this.network[layerNum].length; i++) {
+            for (var j = 0; j < this.network[layerNum+1].length; j++) {
+                this.network[layerNum+1][j].inputs[i] = this.network[layerNum][i].output;
+            }
+        }   
+    }
+
+    // Calculate output of a given layer
+    calculateOutputs(layerNum) {
+        for (var i = 0; i < this.network[layerNum].length; i++) {
+            this.network[layerNum][i].output = this.network[layerNum][i].activationFunc(this.network[layerNum][i].weightedSum());
         }
     }
 
-    // Forward propagation
-    calculateOutputs() {
-        for (var i = 0; i < this.network.length; i++) {
-            for (var j = 0; j < this.network[i].length; j++) {
-                this.network[i][j].output = this.network[i][j].activationFunc(this.network[i][j].weightedSum());
-            } 
-        }
+    calculateError(expOutputs) {
+
     }
 
     showNeurons(isRequested) {

@@ -5,24 +5,29 @@
 // Description :
 // ************************************************
 
-const CANVAS_WIDTH = 1000;
-const CANVAS_HEIGHT = 1000;
-let neurons = [];
-let nnInputs = [64, 20, 20, 10];
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+// First and last entries of nnInputs must be respectively linked to the (training) data and expected outputs
+let nnInputs = [4, 4, 4, 3];
 let nn;
+let td;
 let isNeuRequested = false;
 let isConRequested = false;
+let isInpRequested = true;
+let isOutRequested = true;
 let cbToggleConnections;
 let buttonSaveNeuralNetworkJSON;
 let cbToggleNeurons;
 let slFrameRate;
 var testAngle = 0;
 let img;
+let img2;
 let trainingData = [];
-let testCount = [];
 
 function preload() {
-    img = loadImage('test_img.png');
+    img = loadImage('td/4-0.png');
+	img2 = loadImage('td/4-1.png');
+	//TestImg = loadImage('test_img.png');
 }
 
 function setup() {
@@ -30,22 +35,9 @@ function setup() {
 	canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	background(60);
 
-	// Test, pixels attribute of p5.image is a one dimensional array where each group of four are R,G,B,A values
-	// i + 0 % 4 -> R
-	// i + 3 % 4 -> G
-	// i + 2 % 4 -> B
-	// i + 1 % 4 -> A
-	img.loadPixels();
-	for (var i = 0; i < img.pixels.length; i++) {
-		if ((i) % 4 == 0) {
-			trainingData.push(img.pixels[i]);
-		}	
-	}
-	// Normalize
-    for (var i = 0; i < trainingData.length; i++) {
-        trainingData[i] = trainingData[i] / Math.max(...trainingData);;
-    }
+	td = new TrainingData([[img, loadJSON('td/4-0.json')],[img2, loadJSON('td/4-1.json')]]);
 
+	// Maybe put this DOM elements code in a GUI class
 	cbToggleConnections = createCheckbox('Toggle connections');
 	cbToggleConnections.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 50);
 	cbToggleConnections.mousePressed(toggleConnections);
@@ -59,33 +51,27 @@ function setup() {
 
 	nn = new NeuralNetwork(nnInputs);
 	nn.initNetwork();
-	nn.feedInputs(trainingData);
-	nn.calculateOutputs();
-
-	// Depth of NN minus one because first step (feeding inputs and the first feedforward step) is kept out of this
-	for (var i = 0; i < nn.network.length - 1; i++) {
-		nn.inOutMap();
-		nn.calculateOutputs();
+	//nn.feedInputs(td.imgs[0]);
+	nn.feedInputs([0.39, 0.54, 0.23, 0.77]);
+	// Forward propagation
+	for (var i = 0; i < nn.network.length; i++) {
+		nn.calculateOutputs(i);
+		// Stop mapping at the penultimate network layer, hence the -1
+		if (i < nn.network.length - 1) {
+			nn.inOutMap(i);
+		}		
 	}
 
-	// Method to access all neurons - works
-	/*   nn.network.forEach(layer => {
-		layer.forEach(neuron => {
-		neuron.inputs = 3;
-		});
-	}); */
-	console.log(trainingData);
-	console.log(img.pixels);
+	// Backpropagation test
 }
 
 function draw() {
 	frameRate(slFrameRate.value());
-	
 	background(60);
 	nn.showNeurons(isNeuRequested);
 	nn.showConnections(isConRequested);
-	nn.showInputs(true);
-	nn.showOutputs(true);
+	nn.showInputs(isInpRequested);
+	nn.showOutputs(isOutRequested);
 
 	push();
 	translate(CANVAS_WIDTH - 80, 50);
@@ -100,6 +86,20 @@ function draw() {
 	pop();
 
 	testAngle += 0.2;
+
+	// Show all inputs for each neuron, debug only
+	for (var i = 1; i < nn.network.length; i++) {
+		for (var j = 0; j < nn.network[i].length; j++) {
+			for (var k = 0; k < nn.network[i][j].inputs.length; k++) {
+				push();
+				textSize(10);
+				fill(255, 150, 100);
+				translate(nn.network[i][j].x, nn.network[i][j].y);
+				text((Math.round(nn.network[i][j].inputs[k] * 1000)) / 1000, -40, k*10 - 20);
+				pop();
+			}
+		}
+	}
 }
 
 function toggleConnections() {

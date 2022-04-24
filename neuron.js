@@ -3,6 +3,7 @@ class Neuron {
         this.inputs = [];
         this.weights = [];
         this.output = null;
+        this.err = null;
         this.layer = null;
         this.id = null;
         this.x;

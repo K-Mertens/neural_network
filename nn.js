@@ -2,6 +2,7 @@ class NeuralNetwork {
     constructor(inputs) {
         this.inputs = inputs;
         this.network = [];
+        this.weights = [];
 
         // Add neurons in network
         for (var i = 0; i < this.inputs.length; i++) {
@@ -15,6 +16,7 @@ class NeuralNetwork {
     }
 
     // To be refactored
+    // Algorithm for the weights is not correct
     initNetwork() {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
@@ -43,6 +45,29 @@ class NeuralNetwork {
         }
     }
 
+    initWeights() {
+        for (var i = 0; i < this.network.length - 1; i++) {
+            for (var j = 0; j < this.network[i].length; j++) {
+                for (var k = 0; k < this.network[i+1].length; k++) {
+                    var weightObj = {
+                        originCoord: null,
+                        destinCoord: null,
+                        value:null
+                    };
+                    weightObj.originCoord = [i, j];
+                    weightObj.destinCoord = [i+1, k];
+                    weightObj.value = random(-1,1);
+                    /* tempOriginCoord = [i, j];
+                    tempDestinCoord = [i+1, k];
+                    tempValue = random(-1,1); */
+                    //this.weights.push([weightObj.originCoord], [weight.destinCoord], tempValue);
+                    this.weights.push(weightObj);
+                }
+                    
+            }
+        }
+    }
+
     // Test of feeding input layer - looks like it is working
     feedInputs(data) {
         for (var i = 0; i < this.network[0].length; i++) {
@@ -62,12 +87,25 @@ class NeuralNetwork {
     // Calculate output of a given layer
     calculateOutputs(layerNum) {
         for (var i = 0; i < this.network[layerNum].length; i++) {
-            this.network[layerNum][i].output = this.network[layerNum][i].activationFunc(this.network[layerNum][i].weightedSum());
+            this.network[layerNum][i].output = this.network[layerNum][i].activationFunc(this.network[layerNum][i].aggregationFunc());
         }
     }
 
-    calculateError(expOutputs) {
+    calculateOutputError(desiredOutputs) {
+        var lastLayer = this.network.length - 1;
+        for (var i = 0 ; i < this.network[lastLayer].length; i++) {
+            var neu = this.network[lastLayer][i];
+            neu.err = neu.activationFuncDerivative(neu.aggregationFunc()) * (neu.output - desiredOutputs[i]);
+            // Debug
+            //neu.err = neu.output - expOutputs[i];
+        }
+    }
 
+    // Calculate error of a given layer
+    calculateError(layerNum) {
+        for (var i = this.network[layerNum].length - 1; i > 0 ; i--) {
+            this.network[layerNum - 1][i].err = this.network[layerNum][i].activationFuncDerivative(this.network[layerNum][i].aggregationFunc());
+        }
     }
 
     showNeurons(isRequested) {
@@ -75,6 +113,7 @@ class NeuralNetwork {
             for (var i = 0; i < this.network.length; i++) {
                 for (var j = 0; j < this.network[i].length; j++) {
                     push();
+                    ellipseMode(CENTER);
                     fill(255);
                     stroke(0);
                     circle(this.network[i][j].x, this.network[i][j].y, this.network[i][j].d);
@@ -121,10 +160,26 @@ class NeuralNetwork {
                     push();
                     textSize(10);
                     fill(100, 255, 100);
-                    //console.log(this.network[i][j].output.x);
                     translate(this.network[i][j].x, this.network[i][j].y);
                     text((Math.round(this.network[i][j].output * 1000)) / 1000, 15, -5);
                     pop();
+                } 
+            }
+        }  
+    }
+
+    showWeights(isRequested) {
+        if (isRequested) {
+            for (var i = 0; i < this.network.length; i++) {
+                for (var j = 0; j < this.network[i].length; j++) {
+                    for (var k = 0; k < this.network[i][j].weights.length; k++) {
+                        push();
+                        textSize(10);
+                        fill(100, 50, 255);
+                        translate(this.network[i][j].x, this.network[i][j].y);
+                        text((Math.round(this.network[i][j].weights[k] * 1000)) / 1000, 0, k*10 -50);
+                        pop();
+                    }
                 } 
             }
         }  

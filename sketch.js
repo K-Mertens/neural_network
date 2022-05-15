@@ -15,6 +15,7 @@ let isNeuRequested = false;
 let isConRequested = false;
 let isInpRequested = true;
 let isOutRequested = true;
+let isWeiRequested = true;
 let cbToggleConnections;
 let buttonSaveNeuralNetworkJSON;
 let cbToggleNeurons;
@@ -23,6 +24,13 @@ var testAngle = 0;
 let img;
 let img2;
 let trainingData = [];
+// Desired output linked to the training data that was fed to the network
+let desiredOutputs = [];
+
+var testObj = {
+	testProperty: null
+};
+var testArr = [];
 
 function preload() {
     img = loadImage('td/4-0.png');
@@ -53,6 +61,7 @@ function setup() {
 	nn.initNetwork();
 	//nn.feedInputs(td.imgs[0]);
 	nn.feedInputs([0.39, 0.54, 0.23, 0.77]);
+	desiredOutputs = [0.77, 0.18, -0.82]; // has to be the same dimension as the last layer of network
 	// Forward propagation
 	for (var i = 0; i < nn.network.length; i++) {
 		nn.calculateOutputs(i);
@@ -63,6 +72,12 @@ function setup() {
 	}
 
 	// Backpropagation test
+	nn.calculateOutputError(desiredOutputs);
+	
+	testObj.testProperty = 3;
+	testArr.push(testObj.testProperty);
+	testObj.testProperty = 5;
+	testArr.push(testObj.testProperty);
 }
 
 function draw() {
@@ -72,6 +87,7 @@ function draw() {
 	nn.showConnections(isConRequested);
 	nn.showInputs(isInpRequested);
 	nn.showOutputs(isOutRequested);
+	nn.showWeights(isWeiRequested);
 
 	push();
 	translate(CANVAS_WIDTH - 80, 50);
@@ -98,6 +114,17 @@ function draw() {
 				text((Math.round(nn.network[i][j].inputs[k] * 1000)) / 1000, -40, k*10 - 20);
 				pop();
 			}
+		}
+	}
+	// Show all inputs for each neuron, debug only
+	for (var i = 0; i < nn.network.length; i++) {
+		for (var j = 0; j < nn.network[i].length; j++) {
+			push();
+			textSize(10);
+			fill(200, 200, 50);
+			translate(nn.network[i][j].x, nn.network[i][j].y);
+			text((Math.round(nn.network[i][j].err * 1000)) / 1000, 15, 5);
+			pop();	
 		}
 	}
 }

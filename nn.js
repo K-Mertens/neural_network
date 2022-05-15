@@ -87,7 +87,12 @@ class NeuralNetwork {
     // Calculate output of a given layer
     calculateOutputs(layerNum) {
         for (var i = 0; i < this.network[layerNum].length; i++) {
-            this.network[layerNum][i].output = this.network[layerNum][i].activationFunc(this.network[layerNum][i].aggregationFunc());
+            // No computation needed for the input layer, it just passes the input directly to hidden layers
+            if (layerNum == 0) {
+                this.network[layerNum][i].output = this.network[layerNum][i].inputs[0];
+            } else {
+                this.network[layerNum][i].output = this.network[layerNum][i].activationFunc(this.network[layerNum][i].aggregationFunc());
+            }
         }
     }
 

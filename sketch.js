@@ -60,8 +60,10 @@ function setup() {
 	nn = new NeuralNetwork(nnInputs);
 	nn.initNetwork();
 	//nn.feedInputs(td.imgs[0]);
-	nn.feedInputs([0.39, 0.54, 0.23, 0.77]);
-	desiredOutputs = [0.77, 0.18, -0.82]; // has to be the same dimension as the last layer of network
+	//nn.feedInputs([0.39, 0.54, 0.23, 0.77]);
+	nn.feedInputs([-0.39, -0.54, -0.23, -0.77]);
+	//nn.feedInputs([-0.63, 0.26, 0.543, -0.12]);
+	desiredOutputs = [0.77, 0.18, 0.52]; // has to be the same dimension as the last layer of network
 	// Forward propagation
 	for (var i = 0; i < nn.network.length; i++) {
 		nn.calculateOutputs(i);
@@ -73,9 +75,25 @@ function setup() {
 
 	// Backpropagation test
 	nn.calculateOutputError(desiredOutputs);
+	// Error calculation test
+	nn.calculateError(2);
+	nn.calculateError(1);
 }
 
 function draw() {
+	// "Animation test"
+/* 	nn.feedInputs([random(-1,1), random(-1,1), random(-1,1), random(-1,1)]);
+	for (var i = 0; i < nn.network.length; i++) {
+		nn.calculateOutputs(i);
+		if (i < nn.network.length - 1) {
+			nn.inOutMap(i);
+		}		
+	}
+	nn.calculateOutputError([random(0,1), random(0,1), random(0,1)]);
+	for (var i = nn.network.length - 2; i > 0; i--) {
+		nn.calculateError(i);
+	} */
+
 	frameRate(slFrameRate.value());
 	background(60);
 	nn.showNeurons(isNeuRequested);

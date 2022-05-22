@@ -113,8 +113,18 @@ class NeuralNetwork {
 
     // Calculate error of a given layer
     calculateError(layerNum) {
-        for (var i = this.network[layerNum].length - 1; i > 0 ; i--) {
-            // Implement this by using the weights attribute of nn
+        var sum;
+        var res;
+        for (var i = 0; i < this.network[layerNum].length; i++) {
+            sum = 0;
+            res = 0;
+            for (var j = 0; j < this.network[layerNum + 1].length; j++) {
+                // Aggregation sum
+                sum += this.network[layerNum + 1][j].weights[i] * this.network[layerNum + 1][j].err;
+            }
+            sum = sum / this.network[layerNum + 1].length;
+            // Not sure if correct
+            this.network[layerNum][i].err = this.network[layerNum][i].activationFuncDerivative(this.network[layerNum][i].aggregationFunc()) * sum;
             //this.network[layerNum - 1][i].err = this.network[layerNum][i].activationFuncDerivative(this.network[layerNum][i].aggregationFunc());
         }
     }

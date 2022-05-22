@@ -12,6 +12,7 @@ class Neuron {
     }
 
     aggregationFunc() {
+        // Scalar product
         var sum = 0;
         for (var i = 0; i < this.weights.length; i++) {
             sum += this.inputs[i] * this.weights[i];

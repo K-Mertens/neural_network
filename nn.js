@@ -2,6 +2,7 @@ class NeuralNetwork {
     constructor(inputs) {
         this.inputs = inputs;
         this.network = [];
+        // Or maybe use something like inWeights [] and outWeights [] as properties of the neuron
         this.weights = [];
 
         // Add neurons in network
@@ -16,7 +17,6 @@ class NeuralNetwork {
     }
 
     // To be refactored
-    // Algorithm for the weights is not correct
     initNetwork() {
         for (var i = 0; i < this.network.length; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
@@ -45,7 +45,9 @@ class NeuralNetwork {
         }
     }
 
+    // This will maybe not be used anymore
     initWeights() {
+        var tempArr = [];
         for (var i = 0; i < this.network.length - 1; i++) {
             for (var j = 0; j < this.network[i].length; j++) {
                 for (var k = 0; k < this.network[i+1].length; k++) {
@@ -60,10 +62,13 @@ class NeuralNetwork {
                     /* tempOriginCoord = [i, j];
                     tempDestinCoord = [i+1, k];
                     tempValue = random(-1,1); */
+                    // Find a way such that the weights pushed in this.weights are organized in the same way as this.network
                     //this.weights.push([weightObj.originCoord], [weight.destinCoord], tempValue);
+                    tempArr.push(random(-1,1));
                     this.weights.push(weightObj);
                 }
-                    
+                this.weights.push(tempArr);
+                tempArr = [];
             }
         }
     }
@@ -109,7 +114,15 @@ class NeuralNetwork {
     // Calculate error of a given layer
     calculateError(layerNum) {
         for (var i = this.network[layerNum].length - 1; i > 0 ; i--) {
-            this.network[layerNum - 1][i].err = this.network[layerNum][i].activationFuncDerivative(this.network[layerNum][i].aggregationFunc());
+            // Implement this by using the weights attribute of nn
+            //this.network[layerNum - 1][i].err = this.network[layerNum][i].activationFuncDerivative(this.network[layerNum][i].aggregationFunc());
+        }
+    }
+
+    // Backpropagation
+    outInMap() {
+        for (var i = this.network.length; i < 0; i--) {
+
         }
     }
 

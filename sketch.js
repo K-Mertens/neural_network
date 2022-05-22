@@ -73,11 +73,6 @@ function setup() {
 
 	// Backpropagation test
 	nn.calculateOutputError(desiredOutputs);
-	
-	testObj.testProperty = 3;
-	testArr.push(testObj.testProperty);
-	testObj.testProperty = 5;
-	testArr.push(testObj.testProperty);
 }
 
 function draw() {

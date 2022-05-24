@@ -99,6 +99,9 @@ class NeuralNetwork {
                 this.network[layerNum][i].output = this.network[layerNum][i].activationFunc(this.network[layerNum][i].aggregationFunc());
             }
         }
+
+        // Test of implementing this method like the calculateError() method
+        // Must try to merge inOutMap() and calculateOutputs()
     }
 
     calculateOutputError(desiredOutputs) {
@@ -126,13 +129,6 @@ class NeuralNetwork {
             // Not sure if correct
             this.network[layerNum][i].err = this.network[layerNum][i].activationFuncDerivative(this.network[layerNum][i].aggregationFunc()) * sum;
             //this.network[layerNum - 1][i].err = this.network[layerNum][i].activationFuncDerivative(this.network[layerNum][i].aggregationFunc());
-        }
-    }
-
-    // Backpropagation
-    outInMap() {
-        for (var i = this.network.length; i < 0; i--) {
-
         }
     }
 

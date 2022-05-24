@@ -11,6 +11,7 @@ const CANVAS_HEIGHT = 600;
 let nnInputs = [4, 4, 4, 3];
 let nn;
 let td;
+let guiNetwork;
 let isNeuRequested = false;
 let isConRequested = false;
 let isInpRequested = true;
@@ -19,18 +20,11 @@ let isWeiRequested = true;
 let cbToggleConnections;
 let buttonSaveNeuralNetworkJSON;
 let cbToggleNeurons;
-let slFrameRate;
-var testAngle = 0;
 let img;
 let img2;
 let trainingData = [];
 // Desired output linked to the training data that was fed to the network
 let desiredOutputs = [];
-
-var testObj = {
-	testProperty: null
-};
-var testArr = [];
 
 function preload() {
     img = loadImage('td/4-0.png');
@@ -42,20 +36,18 @@ function setup() {
 	// Canvas creation
 	canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	background(60);
+	guiNetwork = new GUINetwork();
+	guiNetwork.initConnections();
 
 	td = new TrainingData([[img, loadJSON('td/4-0.json')],[img2, loadJSON('td/4-1.json')]]);
 
 	// Maybe put this DOM elements code in a GUI class
-	cbToggleConnections = createCheckbox('Toggle connections');
-	cbToggleConnections.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 50);
-	cbToggleConnections.mousePressed(toggleConnections);
 	buttonSaveNeuralNetworkJSON = createButton('Save JSON');
 	buttonSaveNeuralNetworkJSON.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT);
 	buttonSaveNeuralNetworkJSON.mousePressed(saveNeuralNetworkJSON);
 	cbToggleNeurons = createCheckbox('Toggle neurons');
 	cbToggleNeurons.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 100);
 	cbToggleNeurons.mousePressed(toggleNeurons);
-	slFrameRate = createSlider(1,60,10,1);
 
 	nn = new NeuralNetwork(nnInputs);
 	nn.initNetwork();
@@ -94,27 +86,14 @@ function draw() {
 		nn.calculateError(i);
 	} */
 
-	frameRate(slFrameRate.value());
+	guiNetwork.setFrameRate();
+	guiNetwork.showFrameRate();
 	background(60);
 	nn.showNeurons(isNeuRequested);
 	nn.showConnections(isConRequested);
 	nn.showInputs(isInpRequested);
 	nn.showOutputs(isOutRequested);
 	nn.showWeights(isWeiRequested);
-
-	push();
-	translate(CANVAS_WIDTH - 80, 50);
-	textAlign(CENTER, CENTER);
-	fill(255);
-	text('Framerate : ' + slFrameRate.value() + 'fps', 0, -30);
-	rotate(testAngle);
-	stroke(255);
-	line(0,0,15,0);
-	noFill();
-	circle(0,0,30);
-	pop();
-
-	testAngle += 0.2;
 
 	// Show all inputs for each neuron, debug only
 	for (var i = 1; i < nn.network.length; i++) {
@@ -139,16 +118,6 @@ function draw() {
 			text((Math.round(nn.network[i][j].err * 1000)) / 1000, 15, 5);
 			pop();	
 		}
-	}
-}
-
-function toggleConnections() {
-	if (cbToggleConnections.checked()) {
-		isConRequested = false;
-	} else {
-		isConRequested = true;
-		clear();
-		background(60);
 	}
 }
 

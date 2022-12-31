@@ -18,7 +18,9 @@ class Neuron {
             sum += this.inputs[i] * this.weights[i];
         }
         // Normalize
-        return sum / this.inputs.length;
+        //return sum / this.inputs.length;
+        // No normalizing
+        return sum
     }
 
     activationFunc(input, sel) {

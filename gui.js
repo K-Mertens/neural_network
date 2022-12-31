@@ -2,7 +2,6 @@ class GUINetwork {
     constructor() {
         this.slFrameRate = createSlider(1,60,10,1);
         this.clockAngle = 0;
-
     }
 
     setFrameRate() {
@@ -21,10 +20,11 @@ class GUINetwork {
         noFill();
         circle(0,0,30);
         pop();
-        this.clockAngle +=0.2;
+        this.clockAngle += 0.2;
     }
 
-    initConnections() {
+    init() {
+        // Initialize connections
         cbToggleConnections = createCheckbox('Toggle connections');
         cbToggleConnections.position(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 50);
         // Toggle
@@ -37,5 +37,6 @@ class GUINetwork {
                 background(60);
             }
         });
+        // Initialize
     }
 }

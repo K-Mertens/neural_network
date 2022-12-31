@@ -8,7 +8,7 @@
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 // First and last entries of nnInputs must be respectively linked to the (training) data and expected outputs
-let nnInputs = [4, 4, 4, 3];
+let nnInputs = [2, 2, 1];
 let nn;
 let td;
 let guiNetwork;
@@ -37,7 +37,7 @@ function setup() {
 	canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	background(60);
 	guiNetwork = new GUINetwork();
-	guiNetwork.initConnections();
+	guiNetwork.init();
 
 	td = new TrainingData([[img, loadJSON('td/4-0.json')],[img2, loadJSON('td/4-1.json')]]);
 
@@ -53,9 +53,9 @@ function setup() {
 	nn.initNetwork();
 	//nn.feedInputs(td.imgs[0]);
 	//nn.feedInputs([0.39, 0.54, 0.23, 0.77]);
-	nn.feedInputs([-0.39, -0.54, -0.23, -0.77]);
+	nn.feedInputs([0.12, 0.007]);
 	//nn.feedInputs([-0.63, 0.26, 0.543, -0.12]);
-	desiredOutputs = [0.77, 0.18, 0.52]; // has to be the same dimension as the last layer of network
+	desiredOutputs = [0.8]; // has to be the same dimension as the last layer of network
 	// Forward propagation
 	for (var i = 0; i < nn.network.length; i++) {
 		nn.calculateOutputs(i);
@@ -68,8 +68,9 @@ function setup() {
 	// Backpropagation test
 	nn.calculateOutputError(desiredOutputs);
 	// Error calculation test
-	nn.calculateError(2);
-	nn.calculateError(1);
+	for (var i = nn.network.length - 2; i > 0; i--) {
+		nn.calculateError(i);
+	}
 }
 
 function draw() {
@@ -85,10 +86,10 @@ function draw() {
 	for (var i = nn.network.length - 2; i > 0; i--) {
 		nn.calculateError(i);
 	} */
-
+	background(60);
 	guiNetwork.setFrameRate();
 	guiNetwork.showFrameRate();
-	background(60);
+	
 	nn.showNeurons(isNeuRequested);
 	nn.showConnections(isConRequested);
 	nn.showInputs(isInpRequested);
@@ -119,6 +120,13 @@ function draw() {
 			pop();	
 		}
 	}
+
+	// Display desired outputs
+	push();
+	textAlign(CENTER, CENTER);
+	fill(255);
+	text('Desired output : ' + desiredOutputs, 80, 20);
+	pop();
 }
 
 function saveNeuralNetworkJSON() {
